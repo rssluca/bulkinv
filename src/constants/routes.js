@@ -1,0 +1,9 @@
+export const LANDING = "/";
+export const APP = "/app";
+export const SIGN_IN = "/signin";
+export const SIGN_UP = "/signup";
+export const DASHBOARD = "/app/home";
+export const ACCOUNT = "/app/account";
+export const PASSWORD_FORGET = "/pw-forget";
+export const ADMIN = "/app/admin";
+export const ADMIN_DETAILS = "/app/admin/:id";
