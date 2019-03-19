@@ -5,19 +5,22 @@ import { compose } from "recompose";
 import { withFirebase } from "../../components/Firebase";
 import { withAuthorization } from "../../components/Session";
 import * as ROLES from "../../constants/roles";
-import * as ROUTES from "../../constants/routes";
 
-const AdminPage = () => (
-  <div>
-    <h1>Admin</h1>
-    <p>The Admin Page is accessible by every signed in admin user.</p>
+const AdminUsersPage = props => {
+  // Pathname should be /admin/users
+  const pathname = props.location.pathname;
+  return (
+    <div>
+      <h1>Admin</h1>
+      <p>The Admin Page is accessible by every signed in admin user.</p>
 
-    <Switch>
-      <Route exact path={ROUTES.ADMIN_DETAILS} component={UserItem} />
-      <Route exact path={ROUTES.ADMIN} component={UserList} />
-    </Switch>
-  </div>
-);
+      <Switch>
+        <Route exact path={pathname + "/:id"} component={UserItem} />
+        <Route exact path={pathname} component={UserList} />
+      </Switch>
+    </div>
+  );
+};
 
 class UserListBase extends Component {
   constructor(props) {
@@ -53,7 +56,7 @@ class UserListBase extends Component {
 
   render() {
     const { users, loading } = this.state;
-
+    const pathname = this.props.location.pathname;
     return (
       <div>
         <h2>Users</h2>
@@ -73,7 +76,7 @@ class UserListBase extends Component {
               <span>
                 <Link
                   to={{
-                    pathname: `${ROUTES.ADMIN}/${user.uid}`,
+                    pathname: `${pathname}/${user.uid}`,
                     state: { user }
                   }}
                 >
@@ -163,4 +166,4 @@ const UserItem = withFirebase(UserItemBase);
 
 const condition = authUser => authUser && authUser.roles.includes(ROLES.ADMIN);
 
-export default compose(withAuthorization(condition))(AdminPage);
+export default compose(withAuthorization(condition))(AdminUsersPage);

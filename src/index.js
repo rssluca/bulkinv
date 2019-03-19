@@ -10,8 +10,17 @@ import { withAuthentication } from "./components/Session";
 import * as ROUTES from "./constants/routes";
 
 // core components
+import LandingPage from "./views/Landing";
 import Dashboard from "./layouts/Dashboard.js";
 import Auth from "./layouts/Auth.js";
+
+const NoMatch = ({ location }) => (
+  <div>
+    <h3>
+      No match for <code>{location.pathname}</code>
+    </h3>
+  </div>
+);
 
 const hist = createBrowserHistory();
 
@@ -19,9 +28,12 @@ const App = withAuthentication(() => {
   return (
     <Router history={hist}>
       <Switch>
+        <Route path={ROUTES.LANDING} exact component={LandingPage} />
         <Route path={ROUTES.APP} component={Dashboard} />
+        <Route path={ROUTES.ADMIN} component={Dashboard} />
         <Route path={ROUTES.SIGN_IN} component={Auth} />
         <Route path={ROUTES.PASSWORD_FORGET} component={Auth} />
+        <Route component={NoMatch} />
       </Switch>
     </Router>
   );

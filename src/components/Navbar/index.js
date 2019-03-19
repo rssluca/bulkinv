@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Link as RouterLink } from "react-router-dom";
-import * as ROLES from "../../constants/roles";
+
 import { withStyles } from "@material-ui/core/styles";
 import navbarStyle from "../../assets/jss/components/navbarStyle.js";
 import classNames from "classnames";
@@ -13,10 +13,15 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 
-import routes from "../../constants/dashboardRoutes.js";
-
 const Navbar = props => {
-  const { classes, pathname, drawerToggle, mobileOpen, authUser } = props;
+  const {
+    classes,
+    currentRolePath,
+    currentFullPath,
+    routes,
+    drawerToggle,
+    mobileOpen
+  } = props;
 
   const drawer = (
     <div>
@@ -36,17 +41,10 @@ const Navbar = props => {
           </ListItemText>
         </ListItem>
         {routes.map((prop, key) => {
-          if (prop.layout === "/app") {
-            const active = pathname === prop.layout + prop.path ? true : false;
+          if (prop.parent === currentRolePath) {
+            const active =
+              currentFullPath === prop.parent + prop.path ? true : false;
             const Icon = prop.icon;
-
-            // Add Admin link only if user is admin
-            if (
-              !authUser.roles.includes(ROLES.ADMIN) &&
-              prop.name === "Admin"
-            ) {
-              return null;
-            }
 
             return (
               <ListItem
@@ -57,7 +55,7 @@ const Navbar = props => {
                   active && classes.itemActiveItem
                 )}
                 component={RouterLink}
-                to={prop.layout + prop.path}
+                to={prop.parent + prop.path}
                 button
               >
                 <ListItemIcon>
