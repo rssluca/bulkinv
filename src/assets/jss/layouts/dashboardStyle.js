@@ -6,7 +6,10 @@ const styles = theme => ({
     flexGrow: 1,
     padding: theme.spacing.unit * 3
   },
-  toolbar: theme.mixins.toolbar
+  toolbar: theme.mixins.toolbar,
+  submit: {
+    marginTop: theme.spacing.unit * 3
+  }
 });
 
 export default styles;

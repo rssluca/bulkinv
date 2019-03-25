@@ -23,16 +23,10 @@ const styles = theme => ({
     paddingBottom: 8,
     color: "rgba(255, 255, 255, 0.7)"
   },
-  itemCategory: {
+  logo: {
     // backgroundColor: "#232f3e",
     boxShadow: "0 -1px 0 #404854 inset",
-    paddingTop: 13,
-    paddingBottom: 13
-  },
-  logo: {
-    fontStyle: "italic",
-    // color: theme.palette.primary.main
-    color: "#4fc3f7"
+    paddingLeft: 8
   },
   itemActionable: {
     "&:hover": {

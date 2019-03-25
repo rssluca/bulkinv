@@ -13,6 +13,8 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 
+import logo from "../../assets/img/logo_white.png";
+
 const Navbar = props => {
   const {
     classes,
@@ -25,10 +27,8 @@ const Navbar = props => {
 
   const drawer = (
     <div>
-      <ListItem className={classNames(classes.item, classes.itemCategory)}>
-        <Typography classes={{ root: classes.logo }} variant="h4">
-          BulkInv.
-        </Typography>
+      <ListItem className={classNames(classes.item, classes.logo)}>
+        <img src={logo} alt="Bulk Inv." />
       </ListItem>
       <List component="nav">
         <ListItem className={classes.categoryHeader}>

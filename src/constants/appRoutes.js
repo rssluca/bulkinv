@@ -4,11 +4,13 @@ import AddIcon from "@material-ui/icons/Add";
 import ListIcon from "@material-ui/icons/List";
 import PersonIcon from "@material-ui/icons/Person";
 import PeopleIcon from "@material-ui/icons/People";
+import SettingsIcon from "@material-ui/icons/Settings";
 
 // core components/views for Admin layout
 import DashboardPage from "../views/Dashboard";
 import AddProductsPage from "../views/AddProducts";
 import ListProductsPage from "../views/ListProducts";
+import SettingsPage from "../views/Settings";
 import AccountPage from "../views/Account";
 import AdminDashboardPage from "../views/AdminDashboard";
 import AdminUsersPage from "../views/AdminUsers";
@@ -33,6 +35,13 @@ const appRoutes = [
     name: "List Products",
     icon: ListIcon,
     component: ListProductsPage,
+    parent: "/app"
+  },
+  {
+    path: "/settings",
+    name: "Settings",
+    icon: SettingsIcon,
+    component: SettingsPage,
     parent: "/app"
   },
   {

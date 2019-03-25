@@ -19,6 +19,19 @@ import theme from "../assets/jss/themes/dashboardTheme.js";
 import Header from "../components/Header";
 import Navbar from "../components/Navbar";
 
+const getPageTitle = currentFullPath => {
+  let propName = null;
+  routes.map((prop, key) => {
+    if (
+      currentFullPath.includes(prop.parent) &&
+      currentFullPath.includes(prop.path)
+    ) {
+      propName = prop.name;
+    }
+  });
+  return propName;
+};
+
 const switchRoutes = currentRolePath => {
   // Store the first path in the map loop below, we will use it to redirect to main path
   let firstPath = null;
@@ -60,15 +73,20 @@ class Dashboard extends Component {
     const currentRolePath = this.context.roles.includes(ROLES.ADMIN)
       ? "/admin"
       : "/app";
+    const currentFullPath = this.props.location.pathname;
+
     return (
       <MuiThemeProvider theme={theme}>
         <div className={classes.root}>
           <CssBaseline />
-          <Header drawerToggle={this.handleDrawerToggle} />
+          <Header
+            pageTitle={getPageTitle(currentFullPath)}
+            drawerToggle={this.handleDrawerToggle}
+          />
           <Navbar
             routes={routes}
             currentRolePath={currentRolePath}
-            currentFullPath={this.props.location.pathname}
+            currentFullPath={currentFullPath}
             drawerToggle={this.handleDrawerToggle}
             mobileOpen={this.state.mobileOpen}
           />

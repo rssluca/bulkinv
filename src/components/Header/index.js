@@ -11,7 +11,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import SignOutButton from "../SignOutBtn";
 
 const Header = props => {
-  const { classes, drawerToggle } = props;
+  const { classes, pageTitle, drawerToggle } = props;
 
   return (
     <div>
@@ -31,7 +31,7 @@ const Header = props => {
             color="inherit"
             noWrap
           >
-            Dashboard
+            {pageTitle}
           </Typography>
           <div className={classes.grow} />
           <SignOutButton />
