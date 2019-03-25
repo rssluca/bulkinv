@@ -7,16 +7,20 @@ import { withAuthorization } from "../../components/Session";
 import * as ROLES from "../../constants/roles";
 
 const AdminUsersPage = props => {
-  // Pathname should be /admin/users
-  const pathname = props.location.pathname;
+  // Take the fullPath varuable from the dashboard main file and
+  // pass it down to the list component so that it can be used for the links
   return (
     <div>
       <h1>Admin</h1>
       <p>The Admin Page is accessible by every signed in admin user.</p>
 
       <Switch>
-        <Route exact path={pathname + "/:id"} component={UserItem} />
-        <Route exact path={pathname} component={UserList} />
+        <Route exact path={`${props.fullPath}/:id`} component={UserItem} />
+        <Route
+          exact
+          path={props.fullPath}
+          render={() => <UserList fullPath={props.fullPath} />}
+        />
       </Switch>
     </div>
   );
@@ -35,28 +39,24 @@ class UserListBase extends Component {
   componentDidMount() {
     this.setState({ loading: true });
 
-    this.props.firebase.users().on("value", snapshot => {
-      const usersObject = snapshot.val();
+    this.unsubscribe = this.props.firebase.users().onSnapshot(snapshot => {
+      let users = [];
 
-      const usersList = Object.keys(usersObject).map(key => ({
-        ...usersObject[key],
-        uid: key
-      }));
+      snapshot.forEach(doc => users.push({ ...doc.data(), uid: doc.id }));
 
       this.setState({
-        users: usersList,
+        users,
         loading: false
       });
     });
   }
 
   componentWillUnmount() {
-    this.props.firebase.users().off();
+    this.unsubscribe();
   }
 
   render() {
     const { users, loading } = this.state;
-    const pathname = this.props.location.pathname;
     return (
       <div>
         <h2>Users</h2>
@@ -76,7 +76,7 @@ class UserListBase extends Component {
               <span>
                 <Link
                   to={{
-                    pathname: `${pathname}/${user.uid}`,
+                    pathname: `${this.props.fullPath}/${user.uid}`,
                     state: { user }
                   }}
                 >
@@ -101,6 +101,8 @@ class UserItemBase extends Component {
       resetSuccess: null,
       ...props.location.state
     };
+
+    console.log(this.props.match.params.id);
   }
 
   componentDidMount() {
@@ -110,18 +112,18 @@ class UserItemBase extends Component {
 
     this.setState({ loading: true });
 
-    this.props.firebase
+    this.unsubscribe = this.props.firebase
       .user(this.props.match.params.id)
-      .on("value", snapshot => {
+      .onSnapshot(snapshot => {
         this.setState({
-          user: snapshot.val(),
+          user: snapshot.data(),
           loading: false
         });
       });
   }
 
   componentWillUnmount() {
-    this.props.firebase.user(this.props.match.params.id).off();
+    this.unsubscribe && this.unsubscribe();
   }
 
   onSendPasswordResetEmail = () => {

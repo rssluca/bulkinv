@@ -42,11 +42,13 @@ const switchRoutes = currentRolePath => {
           if (!firstPath) {
             firstPath = prop.path;
           }
+          // We do this way to pass the path
+          const Component = prop.component;
 
           return (
             <Route
               path={prop.parent + prop.path}
-              component={prop.component}
+              render={() => <Component fullPath={prop.parent + prop.path} />}
               key={key}
             />
           );
