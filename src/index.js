@@ -5,7 +5,7 @@ import { Router, Route, Switch } from "react-router-dom";
 import { createBrowserHistory } from "history";
 
 import Firebase, { FirebaseContext } from "./components/Firebase";
-import { withAuthentication } from "./components/Session";
+import { withAuthentication } from "./components/Auth";
 
 import * as ROUTES from "./constants/routes";
 

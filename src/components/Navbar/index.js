@@ -5,7 +5,6 @@ import { Link as RouterLink } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import navbarStyle from "../../assets/jss/components/navbarStyle.js";
 import classNames from "classnames";
-import Typography from "@material-ui/core/Typography";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import List from "@material-ui/core/List";
@@ -13,7 +12,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 
-import logo from "../../assets/img/logo_white.png";
+import logo from "../../assets/img/logo_main.png";
 
 const Navbar = props => {
   const {

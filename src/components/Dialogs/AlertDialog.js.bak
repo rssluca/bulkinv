@@ -1,0 +1,96 @@
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import commonStyle from "../../assets/jss/commonStyle.js";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Button from "@material-ui/core/Button";
+import WarningIcon from "@material-ui/icons/Warning";
+import ErrorIcon from "@material-ui/icons/Error";
+
+const closedSettings = {
+  open: false,
+  action: null,
+  icon: null,
+  type: "continue",
+  title: "",
+  message: ""
+};
+
+const AlertDialog = props => {
+  const { alertDialogProps, setAlertDialogProps, classes } = props;
+
+  const [settings, setSettings] = useState(closedSettings);
+
+  // Set defaults inside by setting alertDialogProps to false where used
+  // (otherwise will have to pass a defualt array every time from the component using this dialig)
+  useEffect(
+    () => {
+      console.log("Running useEffect");
+      if (alertDialogProps === false) {
+        setSettings(closedSettings);
+      } else {
+        console.log(alertDialogProps);
+        setSettings(alertDialogProps);
+      }
+      console.log(settings.open);
+    },
+    [alertDialogProps]
+  );
+
+  const handleClose = () => {
+    setSettings(closedSettings);
+    console.log("close");
+  };
+
+  return (
+    <Dialog
+      open={settings.open}
+      onClose={handleClose}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title">
+        {settings.icon === "warning" && (
+          <WarningIcon
+            size="small"
+            color="secondary"
+            className={classes.iconText}
+          />
+        )}
+        {settings.icon === "error" && (
+          <ErrorIcon
+            size="small"
+            color="secondary"
+            className={classes.iconText}
+          />
+        )}
+        {settings.title}
+      </DialogTitle>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">
+          {settings.message}
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color="primary">
+          {settings.type === "continue" ? "Cancel" : "Ok"}
+        </Button>
+        {settings.type === "continue" && (
+          <Button onClick={settings.action} color="primary" autoFocus>
+            Ok
+          </Button>
+        )}
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+AlertDialog.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+export default withStyles(commonStyle)(AlertDialog);

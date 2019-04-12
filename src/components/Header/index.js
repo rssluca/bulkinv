@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -8,10 +8,24 @@ import headerStyle from "../../assets/jss/components/headerStyle.js";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 
+import { useSessionValue } from "../Session";
+
 import SignOutButton from "../SignOutBtn";
 
 const Header = props => {
-  const { classes, pageTitle, drawerToggle } = props;
+  const { classes, drawerToggle, pageTitle } = props;
+  const [{ appSession }, dispatch] = useSessionValue();
+  // We place any initial session state (context API) here under useEffect
+  useEffect(
+    () => {
+      // Always use the default routes specified title
+      dispatch({
+        type: "set",
+        newTitle: pageTitle
+      });
+    },
+    [pageTitle]
+  );
 
   return (
     <div>
@@ -31,7 +45,7 @@ const Header = props => {
             color="inherit"
             noWrap
           >
-            {pageTitle}
+            {appSession.headerTitle}
           </Typography>
           <div className={classes.grow} />
           <SignOutButton />

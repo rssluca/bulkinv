@@ -20,7 +20,8 @@ const styles = theme => ({
     display: "none",
     [theme.breakpoints.up("sm")]: {
       display: "block"
-    }
+    },
+    color: "#333"
   }
 });
 

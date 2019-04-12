@@ -1,19 +1,22 @@
 // @material-ui/icons
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import AddIcon from "@material-ui/icons/Add";
-import ListIcon from "@material-ui/icons/List";
+// import ListIcon from "@material-ui/icons/List";
 import PersonIcon from "@material-ui/icons/Person";
 import PeopleIcon from "@material-ui/icons/People";
 import SettingsIcon from "@material-ui/icons/Settings";
+import DescriptionIcon from "@material-ui/icons/Description";
+// import NoteAddIcon from "@material-ui/icons/NoteAdd";
+// import PersonAddIcon from "@material-ui/icons/PersonAdd";
 
 // core components/views for Admin layout
-import DashboardPage from "../views/Dashboard";
-import AddProductsPage from "../views/AddProducts";
-import ListProductsPage from "../views/ListProducts";
-import SettingsPage from "../views/Settings";
-import AccountPage from "../views/Account";
-import AdminDashboardPage from "../views/AdminDashboard";
-import AdminUsersPage from "../views/AdminUsers";
+import DashboardPage from "../views/user/Dashboard";
+import ProductsPage from "../views/user/Products";
+import SettingsPage from "../views/user/Settings";
+import AccountPage from "../views/user/Account";
+import AdminDashboardPage from "../views/admin/Dashboard";
+import AdminUsersPage from "../views/admin/Users";
+import AdminCategoriesPage from "../views/admin/Categories";
 
 const appRoutes = [
   {
@@ -24,17 +27,10 @@ const appRoutes = [
     parent: "/app"
   },
   {
-    path: "/add",
-    name: "Add Products",
+    path: "/products",
+    name: "Products",
     icon: AddIcon,
-    component: AddProductsPage,
-    parent: "/app"
-  },
-  {
-    path: "/list",
-    name: "List Products",
-    icon: ListIcon,
-    component: ListProductsPage,
+    component: ProductsPage,
     parent: "/app"
   },
   {
@@ -53,16 +49,23 @@ const appRoutes = [
   },
   {
     path: "/dashboard",
-    name: "Admin - Dashboard",
+    name: "Dashboard",
     icon: DashboardIcon,
     component: AdminDashboardPage,
     parent: "/admin"
   },
   {
     path: "/users",
-    name: "Admin - Users",
+    name: "Users",
     icon: PeopleIcon,
     component: AdminUsersPage,
+    parent: "/admin"
+  },
+  {
+    path: "/categories",
+    name: "Categories",
+    icon: DescriptionIcon,
+    component: AdminCategoriesPage,
     parent: "/admin"
   }
 ];
