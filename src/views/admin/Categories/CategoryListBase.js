@@ -77,38 +77,35 @@ const CategoryListBase = props => {
   const [{ firebase }] = useSessionValue();
   const { classes } = props;
 
-  useEffect(() => {
-    setLoading(true);
+  useEffect(
+    () => {
+      setLoading(true);
 
-    const unsubscribe = firebase.db
-      .collection("categories")
-      .onSnapshot(snapshot => {
-        let categories = [];
-        let suggestions = []; // Pass to autocomplete
-        console.log(snapshot);
+      const unsubscribe = firebase.db.collection("categories").onSnapshot(snapshot => {
+        let newCategories = [];
+        let newSuggestions = []; // Pass to autocomplete
         snapshot.forEach(doc => {
           // This will return a list of templates and images.
-          const amazon_templates = getTemplateLinks(
-            classes.smallButton,
-            doc.data().templates.amazon
-          );
+          const amazon_templates = getTemplateLinks(classes.smallButton, doc.data().templates.amazon);
 
-          categories.push({
+          newCategories.push({
             uid: doc.id,
             amazon_links: amazon_templates[0],
             amazon_file_urls: amazon_templates[1]
           });
 
-          suggestions.push({ label: doc.id });
+          newSuggestions.push({ label: doc.id });
         });
 
-        setCategories(categories);
-        setSuggestions(suggestions);
+        setCategories(newCategories);
+        setSuggestions(newSuggestions);
         setLoading(false);
       });
 
-    return unsubscribe;
-  }, []);
+      return () => unsubscribe;
+    },
+    [firebase.db, classes.smallButton]
+  );
 
   const handleCategoryDelete = rowData => {
     firebase.db
@@ -162,8 +159,7 @@ const CategoryListBase = props => {
           icon: "warning",
           type: "continue",
           title: `Delete category "${rowData.uid}"?`,
-          message:
-            "Are you sure you want to delete this category? This will also remove all related templates!"
+          message: "Are you sure you want to delete this category? This will also remove all related templates!"
         });
         setAlertDialogOpen(true);
       },
@@ -189,12 +185,7 @@ const CategoryListBase = props => {
       {loading ? (
         <Typography className={classes.loadingText}>Loading...</Typography>
       ) : (
-        <MaterialTable
-          data={categories}
-          columns={columns}
-          options={options}
-          actions={actions}
-        />
+        <MaterialTable data={categories} columns={columns} options={options} actions={actions} />
       )}
       <AddTemplateDialog
         classes={classes}
@@ -208,10 +199,7 @@ const CategoryListBase = props => {
         setAlertDialogOpen={setAlertDialogOpen}
         alertDialogProps={alertDialogProps}
       />
-      <Snackbar
-        snackbarProps={snackbarProps}
-        setSnackbarProps={setSnackbarProps}
-      />
+      <Snackbar snackbarProps={snackbarProps} setSnackbarProps={setSnackbarProps} />
     </div>
   );
 };

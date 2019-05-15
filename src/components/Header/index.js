@@ -23,27 +23,17 @@ const Header = props => {
         newTitle: pageTitle
       });
     },
-    [pageTitle]
+    [pageTitle, dispatch]
   );
 
   return (
     <div>
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="Open drawer"
-            onClick={drawerToggle}
-            className={classes.menuButton}
-          >
+          <IconButton color="inherit" aria-label="Open drawer" onClick={drawerToggle} className={classes.menuButton}>
             <MenuIcon />
           </IconButton>
-          <Typography
-            className={classes.title}
-            variant="h6"
-            color="inherit"
-            noWrap
-          >
+          <Typography className={classes.title} variant="h6" color="inherit" noWrap>
             {app.headerTitle}
           </Typography>
           <div className={classes.grow} />

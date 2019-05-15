@@ -6,14 +6,14 @@ import * as ROUTES from "../constants/routes";
 function useAuthorization(condition) {
   const [{ firebase }] = useSessionValue();
   const { history } = useReactRouter();
-  useEffect(() => {
-    const unsubscribe = firebase.onAuthUserListener(
-      authUser => {},
-      () => history.push(ROUTES.SIGN_IN)
-    );
+  useEffect(
+    () => {
+      const unsubscribe = firebase.onAuthUserListener(authUser => {}, () => history.push(ROUTES.SIGN_IN));
 
-    return () => unsubscribe();
-  }, []);
+      return () => unsubscribe();
+    },
+    [firebase, history]
+  );
 }
 
 export default useAuthorization;

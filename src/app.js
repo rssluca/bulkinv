@@ -20,53 +20,56 @@ const App = () => {
   const [{ firebase, app }, dispatch] = useSessionValue();
 
   // User details won't be refreshed because only auth is being listended to, not the user data binded
-  useEffect(() => {
-    const unsubscribe = firebase.onAuthUserListener(
-      authUser => {
-        if (app.authUser !== authUser) {
-          localStorage.setItem("authUser", JSON.stringify(authUser));
+  useEffect(
+    () => {
+      const unsubscribe = firebase.onAuthUserListener(
+        authUser => {
+          if (app.authUser !== authUser) {
+            localStorage.setItem("authUser", JSON.stringify(authUser));
 
-          dispatch({
-            type: "setAuthUser",
-            authUser: authUser
-          });
+            dispatch({
+              type: "setAuthUser",
+              authUser: authUser
+            });
 
-          // const setclaim = firebase.functions.httpsCallable("api/set_custom_claims");
-          // setclaim()
-          //   .then(data => {
-          //     console.log("DONE");
-          //
-          //     firebase.auth.currentUser.getIdToken(true);
-          //   })
-          //   .catch(err => {
-          //     console.log("Errrrrrrr", err);
-          //   });
-          //
-          // firebase.auth.currentUser
-          //   .getIdTokenResult()
-          //   .then(idTokenResult => {
-          //     console.log(idTokenResult.claims);
-          //   })
-          //   .catch(error => {
-          //     console.log(error);
-          //   });
+            // const setclaim = firebase.functions.httpsCallable("api/set_custom_claims");
+            // setclaim()
+            //   .then(data => {
+            //     console.log("DONE");
+            //
+            //     firebase.auth.currentUser.getIdToken(true);
+            //   })
+            //   .catch(err => {
+            //     console.log("Errrrrrrr", err);
+            //   });
+            //
+            // firebase.auth.currentUser
+            //   .getIdTokenResult()
+            //   .then(idTokenResult => {
+            //     console.log(idTokenResult.claims);
+            //   })
+            //   .catch(error => {
+            //     console.log(error);
+            //   });
+          }
+        },
+        () => {
+          // Update only if app.authUser is set
+          if (app.authUser !== null) {
+            // console.log("Not logged", app.authUser);
+            localStorage.removeItem("authUser");
+            dispatch({
+              type: "setAuthUser",
+              authUser: null
+            });
+          }
         }
-      },
-      () => {
-        // Update only if app.authUser is set
-        if (app.authUser !== null) {
-          // console.log("Not logged", app.authUser);
-          localStorage.removeItem("authUser");
-          dispatch({
-            type: "setAuthUser",
-            authUser: null
-          });
-        }
-      }
-    );
+      );
 
-    return () => unsubscribe();
-  }, []);
+      return () => unsubscribe();
+    },
+    [app.authUser, dispatch, firebase]
+  );
 
   // Load store settings
   useEffect(
@@ -97,7 +100,7 @@ const App = () => {
         return () => unsubscribe();
       }
     },
-    [app.authUser]
+    [app.authUser, dispatch, firebase.db]
   );
 
   // // Load category settings
@@ -125,7 +128,7 @@ const App = () => {
         return () => unsubscribe();
       }
     },
-    [app.authUser]
+    [app.authUser, dispatch, firebase.db]
   );
 
   return (

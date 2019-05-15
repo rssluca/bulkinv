@@ -12,23 +12,26 @@ const UserListBase = props => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    setLoading(true);
+  useEffect(
+    () => {
+      setLoading(true);
 
-    const unsubscribe = firebase.db.collection("users").onSnapshot(snapshot => {
-      let users = [];
+      const unsubscribe = firebase.db.collection("users").onSnapshot(snapshot => {
+        let users = [];
 
-      snapshot.forEach(doc => users.push({ ...doc.data(), uid: doc.id }));
+        snapshot.forEach(doc => users.push({ ...doc.data(), uid: doc.id }));
 
-      setUsers(users);
-      setLoading(false);
-    });
+        setUsers(users);
+        setLoading(false);
+      });
 
-    return () => {
-      // Clean up the subscription
-      unsubscribe();
-    };
-  }, []);
+      return () => {
+        // Clean up the subscription
+        unsubscribe();
+      };
+    },
+    [firebase.db]
+  );
 
   const { classes } = props;
 
@@ -114,12 +117,7 @@ const UserListBase = props => {
       {loading ? (
         <Typography className={classes.loadingText}>Loading...</Typography>
       ) : (
-        <MaterialTable
-          data={users}
-          columns={columns}
-          options={options}
-          actions={actions}
-        />
+        <MaterialTable data={users} columns={columns} options={options} actions={actions} />
       )}
     </div>
   );

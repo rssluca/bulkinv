@@ -1,124 +1,112 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
+import { useSessionValue } from "../../../components/Session";
+import useReactRouter from "use-react-router";
+const AddUserBase = () => {
+  const [{ firebase }] = useSessionValue();
+  const { history } = useReactRouter();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [storeId, setStoreId] = useState("");
+  const [email, setEmail] = useState("");
+  const [passwordOne, setPasswordOne] = useState("");
+  const [passwordTwo, setPasswordTwo] = useState("");
+  const [error, setError] = useState(null);
 
-const INITIAL_STATE = {
-  username: "",
-  email: "",
-  passwordOne: "",
-  passwordTwo: "",
-  isAdmin: false,
-  error: null
-};
-
-class AddUserBase extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = { ...INITIAL_STATE };
-  }
-
-  onSubmit = event => {
-    const { username, email, passwordOne, isAdmin } = this.state;
-    const roles = [];
-
-    if (isAdmin) {
-      roles.push("ADMIN");
-    }
-
-    this.props.firebase
+  const onSubmit = event => {
+    firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
         // Create a user in your Firebase database
-        return this.props.firebase.user(authUser.user.uid).set(
+        return firebase.user(authUser.user.uid).set(
           {
-            username,
-            email,
-            roles
+            email: email,
+            name: {
+              first: firstName,
+              last: lastName
+            },
+            roles: {
+              [storeId]: "admin"
+            }
           },
           { merge: true }
         );
       })
       .then(authUser => {
-        this.setState({ ...INITIAL_STATE });
-        this.props.history.push(this.props.fullPath);
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setStoreId("");
+        setPasswordOne("");
+        setPasswordTwo("");
+
+        history.push(this.props.fullPath);
       })
       .catch(error => {
-        this.setState({ error });
+        setError(error);
       });
 
     event.preventDefault();
   };
 
-  onChange = event => {
-    this.setState({ [event.target.name]: event.target.value });
-  };
+  const isInvalid =
+    passwordOne !== passwordTwo ||
+    passwordOne === "" ||
+    email === "" ||
+    lastName === "" ||
+    storeId === "" ||
+    firstName === "";
 
-  onChangeCheckbox = event => {
-    this.setState({ [event.target.name]: event.target.checked });
-  };
+  return (
+    <form onSubmit={onSubmit}>
+      <input
+        name="first_name"
+        value={firstName}
+        onChange={e => setFirstName(e.target.value)}
+        type="text"
+        placeholder="First Name"
+      />
+      <input
+        name="last_name"
+        value={lastName}
+        onChange={e => setLastName(e.target.value)}
+        type="text"
+        placeholder="Last Name"
+      />
+      <input
+        name="store_id"
+        value={storeId}
+        onChange={e => setStoreId(e.target.value)}
+        type="text"
+        placeholder="Store Id"
+      />
+      <input
+        name="email"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        type="text"
+        placeholder="Email Address"
+      />
+      <input
+        name="passwordOne"
+        value={passwordOne}
+        onChange={e => setPasswordOne(e.target.value)}
+        type="password"
+        placeholder="Password"
+      />
+      <input
+        name="passwordTwo"
+        value={passwordTwo}
+        onChange={e => setPasswordTwo(e.target.value)}
+        type="password"
+        placeholder="Confirm Password"
+      />
+      <button disabled={isInvalid} type="submit">
+        Sign Up
+      </button>
 
-  render() {
-    const {
-      username,
-      email,
-      passwordOne,
-      passwordTwo,
-      isAdmin,
-      error
-    } = this.state;
-
-    const isInvalid =
-      passwordOne !== passwordTwo ||
-      passwordOne === "" ||
-      email === "" ||
-      username === "";
-
-    return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          name="username"
-          value={username}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Full Name"
-        />
-        <input
-          name="email"
-          value={email}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Email Address"
-        />
-        <input
-          name="passwordOne"
-          value={passwordOne}
-          onChange={this.onChange}
-          type="password"
-          placeholder="Password"
-        />
-        <input
-          name="passwordTwo"
-          value={passwordTwo}
-          onChange={this.onChange}
-          type="password"
-          placeholder="Confirm Password"
-        />
-        <label>
-          Admin:
-          <input
-            name="isAdmin"
-            type="checkbox"
-            checked={isAdmin}
-            onChange={this.onChangeCheckbox}
-          />
-        </label>
-        <button disabled={isInvalid} type="submit">
-          Sign Up
-        </button>
-
-        {error && <p>{error.message}</p>}
-      </form>
-    );
-  }
-}
+      {error && <p>{error.message}</p>}
+    </form>
+  );
+};
 
 export default AddUserBase;

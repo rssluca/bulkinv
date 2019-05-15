@@ -28,9 +28,12 @@ const SignInPage = props => {
   useDocumentTitle("Sign In");
 
   // Redirect to app if already logged in
-  useEffect(() => {
-    app.authUser && history.push(ROUTES.APP);
-  }, []);
+  useEffect(
+    () => {
+      app.authUser && history.push(ROUTES.APP);
+    },
+    [app.authUser, history]
+  );
 
   const onSubmit = event => {
     firebase
