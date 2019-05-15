@@ -1,6 +1,7 @@
 const dropzoneStyle = {
   baseStyle: {
-    flex: 1
+    flex: 1,
+    outline: "none"
   },
   activeStyle: {
     borderStyle: "solid",
@@ -33,8 +34,8 @@ const dropzoneStyle = {
   },
   img: {
     display: "block",
-    width: "auto",
-    height: "100%"
+    width: "100px",
+    height: "100px"
   }
 };
 

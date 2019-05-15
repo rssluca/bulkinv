@@ -1,20 +1,12 @@
-import React, { Component } from "react";
-import { compose } from "recompose";
-import { withAuthorization } from "../../../components/Auth";
+import React from "react";
 
-class AdminDashboardPage extends Component {
-  render() {
-    return (
-      <div>
-        <h1>Admin Dashboard</h1>
-        <p>The Home Page is accessible by admins.</p>
-      </div>
-    );
-  }
-}
-const condition = authUser =>
-  authUser &&
-  authUser.roles.hasOwnProperty("bulkinv") &&
-  authUser.roles.bulkinv.includes("ADMIN");
+const AdminDashboardPage = () => {
+  return (
+    <div>
+      <h1>Admin Dashboard</h1>
+      <p>The Home Page is accessible by admins.</p>
+    </div>
+  );
+};
 
-export default compose(withAuthorization(condition))(AdminDashboardPage);
+export default AdminDashboardPage;

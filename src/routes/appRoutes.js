@@ -27,7 +27,7 @@ const appRoutes = [
     parent: "/app"
   },
   {
-    path: "/products",
+    path: "/products/add",
     name: "Products",
     icon: AddIcon,
     component: ProductsPage,

@@ -60,7 +60,9 @@ const CustomizedSnackbar = props => {
     }
 
     setSnackbarProps({
-      open: false
+      open: false,
+      variant: snackbarProps.variant,
+      message: snackbarProps.message
     });
   };
 

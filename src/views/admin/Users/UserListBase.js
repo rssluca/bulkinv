@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-
 import PropTypes from "prop-types";
+import { useSessionValue } from "../../../components/Session";
 import { withStyles } from "@material-ui/core/styles";
 import MaterialTable from "material-table";
 import combineStyles from "../../../utils/combineStyles.js";
@@ -8,22 +8,21 @@ import commonStyle from "../../../assets/jss/commonStyle.js";
 import Typography from "@material-ui/core/Typography";
 
 const UserListBase = props => {
+  const [{ firebase }] = useSessionValue();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
 
-    const unsubscribe = props.firebase.db
-      .collection("users")
-      .onSnapshot(snapshot => {
-        let users = [];
+    const unsubscribe = firebase.db.collection("users").onSnapshot(snapshot => {
+      let users = [];
 
-        snapshot.forEach(doc => users.push({ ...doc.data(), uid: doc.id }));
+      snapshot.forEach(doc => users.push({ ...doc.data(), uid: doc.id }));
 
-        setUsers(users);
-        setLoading(false);
-      });
+      setUsers(users);
+      setLoading(false);
+    });
 
     return () => {
       // Clean up the subscription

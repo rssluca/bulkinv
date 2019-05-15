@@ -1,19 +1,18 @@
 /* eslint-disable */
-import React, { Component, useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { compose } from "recompose";
-import routes from "../constants/appRoutes.js";
+import routes from "../routes/appRoutes.js";
+import NotFound from "../components/NotFound";
 
 // Dashboard should only be accessible to logged in users
-import { withAuthorization } from "../components/Auth";
-
-// Context and reducers
-import { SessionProvider, useSessionValue } from "../components/Session";
-import appReducer from "../components/reducers/appReducer.js";
-// import userReducer from "../components/reducers/userReducer.js";
+import useAuthorization from "../hooks/useAuthorization.js";
+import { useSessionValue } from "../components/Session";
+import useDocumentTitle from "../hooks/useDocumentTitle.js";
 
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import { withStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import dashboardStyle from "../assets/jss/layouts/dashboardStyle.js";
@@ -26,15 +25,15 @@ import Navbar from "../components/Navbar";
 // NOT SURE THIS IS THE BEST THING TO DO
 const getPageTitle = currentFullPath => {
   let propName = null;
+  let propParent = null;
   routes.map((prop, key) => {
-    if (
-      currentFullPath.includes(prop.parent) &&
-      currentFullPath.includes(prop.path)
-    ) {
+    if (currentFullPath.includes(prop.parent) && currentFullPath.includes(prop.path)) {
       propName = prop.name;
+      propParent = prop.parent;
     }
   });
-  return propName;
+
+  return (propParent === "/admin" ? "Admin - " : "") + propName;
 };
 
 const switchRoutes = currentRolePath => {
@@ -59,52 +58,62 @@ const switchRoutes = currentRolePath => {
           );
         }
       })}
-      {currentRolePath === "/admin" && (
-        <Redirect from="/app" to="/admin/dashboard" />
-      )}
+      {currentRolePath === "/admin" && <Redirect from="/app" to="/admin/dashboard" />}
       <Redirect from={currentRolePath} to={currentRolePath + firstPath} />
+      <Redirect to="/404" />
     </Switch>
   );
 };
 
+const getCurrentRolePath = roles => {
+  return roles.hasOwnProperty("bulkinv") && roles.bulkinv.includes("admin") ? "/admin" : "/app";
+};
+
 const Dashboard = props => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const initialState = {
-    appSession: { headerTitle: "" }
-  };
+  const [{ app }, dispatch] = useSessionValue();
+  const { classes } = props;
 
-  const mainReducer = ({ appSession }, action) => ({
-    appSession: appReducer(appSession, action)
-    // userSession: userReducer(userSession, action)
-  });
+  // Make sure user is authorized
+  const condition = authUser => !!authUser;
+  useAuthorization(condition);
+
+  const currentRolePath = app.authUser ? getCurrentRolePath(app.authUser.roles) : "/app";
+
+  // Set Document title
+  useDocumentTitle(getPageTitle(props.location.pathname));
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const { classes, authUser } = props;
-
-  const currentRolePath =
-    authUser.roles.hasOwnProperty("bulkinv") &&
-    authUser.roles.bulkinv.includes("ADMIN")
-      ? "/admin"
-      : "/app";
-
-  const currentFullPath = currentFullPath;
+  // Make sure authUser and, if app user  settings/category, are loaded
+  const loading = () => {
+    if (app.authUser) {
+      if (app.authUser.roles.hasOwnProperty("bulkinv") && app.authUser.roles.bulkinv.includes("ADMIN")) {
+        return true;
+      } else {
+        if (app.storeSettings && app.categorySettings) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    } else {
+      return false;
+    }
+  };
 
   return (
-    <SessionProvider initialState={initialState} reducer={mainReducer}>
-      <MuiThemeProvider theme={theme}>
+    <MuiThemeProvider theme={theme}>
+      {loading() ? (
         <div className={classes.root}>
           <CssBaseline />
-          <Header
-            pageTitle={getPageTitle(props.location.pathname)}
-            drawerToggle={handleDrawerToggle}
-          />
+          <Header pageTitle={getPageTitle(props.location.pathname)} drawerToggle={handleDrawerToggle} />
           <Navbar
             routes={routes}
             currentRolePath={currentRolePath}
-            currentFullPath={currentFullPath}
+            currentFullPath={props.location.pathname}
             drawerToggle={handleDrawerToggle}
             mobileOpen={mobileOpen}
           />
@@ -113,8 +122,12 @@ const Dashboard = props => {
             {switchRoutes(currentRolePath)}
           </main>
         </div>
-      </MuiThemeProvider>
-    </SessionProvider>
+      ) : (
+        <div className={classes.progress}>
+          <CircularProgress />
+        </div>
+      )}
+    </MuiThemeProvider>
   );
 };
 
@@ -122,9 +135,4 @@ Dashboard.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-const condition = authUser => !!authUser;
-
-export default compose(
-  withStyles(dashboardStyle),
-  withAuthorization(condition)
-)(Dashboard);
+export default compose(withStyles(dashboardStyle))(Dashboard);

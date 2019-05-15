@@ -1,3 +1,6 @@
+import green from "@material-ui/core/colors/green";
+import orange from "@material-ui/core/colors/orange";
+
 const styles = theme => ({
   dropboxText: {
     display: "inline-flex"
@@ -18,6 +21,9 @@ const styles = theme => ({
   marginBottom2: {
     marginBottom: theme.spacing.unit * 2
   },
+  marginBottom4: {
+    marginBottom: theme.spacing.unit * 4
+  },
   marginTop: {
     marginTop: theme.spacing.unit
   },
@@ -30,6 +36,9 @@ const styles = theme => ({
   marginRight: {
     marginRight: theme.spacing.unit
   },
+  marginRight4: {
+    marginRight: theme.spacing.unit * 4
+  },
   iconSmall: {
     fontSize: 20
   },
@@ -41,6 +50,9 @@ const styles = theme => ({
   },
   textCenter: {
     textAlign: "center"
+  },
+  textRight: {
+    textAlign: "right"
   },
   loadingText: {
     flex: 1,
@@ -62,6 +74,27 @@ const styles = theme => ({
   },
   dense: {
     marginTop: 19
+  },
+  checkIcon: {
+    color: green[500]
+  },
+  warningIcon: {
+    color: orange[500]
+  },
+  iconHoverSecondary: {
+    "&:hover": {
+      color: theme.palette.secondary.main
+    }
+  },
+  iconHoverDisabled: {
+    "&:hover": {
+      color: theme.palette.text.disabled
+    }
+  },
+  iconHoverPrimary: {
+    "&:hover": {
+      color: theme.palette.primary.main
+    }
   }
 });
 

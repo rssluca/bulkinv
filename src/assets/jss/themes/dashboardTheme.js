@@ -10,6 +10,12 @@ let theme = createMuiTheme({
       main: "#42a5f5",
       dark: "#006db3",
       contrastText: "#fff"
+    },
+    secondary: {
+      light: "#ff7961",
+      main: "#f44336",
+      dark: "#ba000d",
+      contrastText: "#fff"
     }
   },
   shape: {

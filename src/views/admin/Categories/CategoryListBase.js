@@ -10,6 +10,8 @@ import AddTemplateDialog from "../../../components/Dialogs/AddTemplateDialog.js"
 import AlertDialog from "../../../components/Dialogs/AlertDialog.js";
 import Snackbar from "../../../components/Snackbar";
 
+import { useSessionValue } from "../../../components/Session";
+
 // Create table header details
 const columns = [
   {
@@ -71,7 +73,9 @@ const CategoryListBase = props => {
   const [categories, setCategories] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { firebase, classes } = props;
+
+  const [{ firebase }] = useSessionValue();
+  const { classes } = props;
 
   useEffect(() => {
     setLoading(true);
@@ -81,7 +85,7 @@ const CategoryListBase = props => {
       .onSnapshot(snapshot => {
         let categories = [];
         let suggestions = []; // Pass to autocomplete
-
+        console.log(snapshot);
         snapshot.forEach(doc => {
           // This will return a list of templates and images.
           const amazon_templates = getTemplateLinks(
@@ -103,10 +107,7 @@ const CategoryListBase = props => {
         setLoading(false);
       });
 
-    return () => {
-      // Clean up the subscription
-      unsubscribe();
-    };
+    return unsubscribe;
   }, []);
 
   const handleCategoryDelete = rowData => {
@@ -150,15 +151,13 @@ const CategoryListBase = props => {
       });
   };
 
-  const AddButton = props => <Button {...props}>Add a new template</Button>;
-
   const actions = [
     {
       icon: "delete",
       tooltip: "Delete Category",
       onClick: (event, rowData) => {
         setAlertDialogProps({
-          open: true,
+          showLoading: true,
           action: () => handleCategoryDelete(rowData),
           icon: "warning",
           type: "continue",
@@ -174,7 +173,7 @@ const CategoryListBase = props => {
       }
     },
     {
-      icon: props => AddButton(props),
+      icon: "add",
       onClick: (event, rowData) => {
         setAddDialogOpen(true);
       },

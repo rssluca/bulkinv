@@ -1,19 +1,21 @@
 import React from "react";
-import { withFirebase } from "../Firebase";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import ExitIcon from "@material-ui/icons/ExitToApp";
+import { useSessionValue } from "../Session";
 
-const SignOutButton = ({ firebase }) => (
-  <Tooltip title="Sign Out">
-    <IconButton
-      color="inherit"
-      aria-label="Sign Out"
-      onClick={firebase.doSignOut}
-    >
-      <ExitIcon />
-    </IconButton>
-  </Tooltip>
-);
+const SignOutButton = () => {
+  const [{ firebase }] = useSessionValue();
+  const onSignOut = () => {
+    firebase.doSignOut();
+  };
 
-export default withFirebase(SignOutButton);
+  return (
+    <Tooltip title="Sign Out">
+      <IconButton color="inherit" aria-label="Sign Out" onClick={onSignOut}>
+        <ExitIcon />
+      </IconButton>
+    </Tooltip>
+  );
+};
+export default SignOutButton;
