@@ -6,32 +6,31 @@ import MaterialTable from "material-table";
 import combineStyles from "../../../utils/combineStyles.js";
 import commonStyle from "../../../assets/jss/commonStyle.js";
 import Typography from "@material-ui/core/Typography";
+import useReactRouter from "use-react-router";
 
 const UserListBase = props => {
   const [{ firebase }] = useSessionValue();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { history } = useReactRouter();
 
-  useEffect(
-    () => {
-      setLoading(true);
+  useEffect(() => {
+    setLoading(true);
 
-      const unsubscribe = firebase.db.collection("users").onSnapshot(snapshot => {
-        let users = [];
+    const unsubscribe = firebase.db.collection("users").onSnapshot(snapshot => {
+      let users = [];
 
-        snapshot.forEach(doc => users.push({ ...doc.data(), uid: doc.id }));
+      snapshot.forEach(doc => users.push({ ...doc.data(), uid: doc.id }));
 
-        setUsers(users);
-        setLoading(false);
-      });
+      setUsers(users);
+      setLoading(false);
+    });
 
-      return () => {
-        // Clean up the subscription
-        unsubscribe();
-      };
-    },
-    [firebase.db]
-  );
+    return () => {
+      // Clean up the subscription
+      unsubscribe();
+    };
+  }, [firebase.db]);
 
   const { classes } = props;
 
@@ -79,16 +78,16 @@ const UserListBase = props => {
   };
 
   const actions = [
-    {
-      icon: "edit",
-      tooltip: "Edit User",
-      onClick: (event, rowData) => {
-        alert("You clicked user " + rowData.name);
-      },
-      iconProps: {
-        color: "primary"
-      }
-    },
+    // {
+    //   icon: "edit",
+    //   tooltip: "Edit User",
+    //   onClick: (event, rowData) => {
+    //     alert("You clicked user " + rowData.name);
+    //   },
+    //   iconProps: {
+    //     color: "primary"
+    //   }
+    // },
     {
       icon: "delete",
       tooltip: "Delete User",
@@ -103,7 +102,7 @@ const UserListBase = props => {
       icon: "add",
       tooltip: "Add User",
       onClick: (event, rowData) => {
-        alert("You clicked user " + rowData.name);
+        history.push(props.fullPath + "/new");
       },
       iconProps: {
         color: "primary"
@@ -117,7 +116,12 @@ const UserListBase = props => {
       {loading ? (
         <Typography className={classes.loadingText}>Loading...</Typography>
       ) : (
-        <MaterialTable data={users} columns={columns} options={options} actions={actions} />
+        <MaterialTable
+          data={users}
+          columns={columns}
+          options={options}
+          actions={actions}
+        />
       )}
     </div>
   );

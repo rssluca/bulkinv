@@ -6,7 +6,11 @@ import { useSessionValue } from "../Session";
 
 const SignOutButton = () => {
   const [{ firebase }] = useSessionValue();
+
   const onSignOut = () => {
+    localStorage.removeItem("authUser");
+    localStorage.removeItem("storeSettings");
+    localStorage.removeItem("categorySettings");
     firebase.doSignOut();
   };
 

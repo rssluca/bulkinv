@@ -16,7 +16,7 @@ const config = {
 class Firebase {
   constructor() {
     app.initializeApp(config);
-    // app.functions().useFunctionsEmulator("http://localhost:5000");
+    app.functions().useFunctionsEmulator("http://localhost:5000");
     app
       .firestore()
       .enablePersistence()
@@ -42,9 +42,11 @@ class Firebase {
 
   // *** Auth API ***
 
-  doCreateUserWithEmailAndPassword = (email, password) => this.auth.createUserWithEmailAndPassword(email, password);
+  doCreateUserWithEmailAndPassword = (email, password) =>
+    this.auth.createUserWithEmailAndPassword(email, password);
 
-  doSignInWithEmailAndPassword = (email, password) => this.auth.signInWithEmailAndPassword(email, password);
+  doSignInWithEmailAndPassword = (email, password) =>
+    this.auth.signInWithEmailAndPassword(email, password);
 
   doSignOut = () => this.auth.signOut();
 

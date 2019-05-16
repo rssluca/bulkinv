@@ -18,10 +18,12 @@
     "react-table": "^6.10.0",
     "read-excel-file": "^3.0.0",
     "recompose": "^0.30.0",
+    "source-map-explorer": "^1.8.0",
     "typeface-roboto": "0.0.54",
     "use-react-router": "^1.0.5"
   },
   "scripts": {
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

@@ -8,7 +8,10 @@ function useAuthorization(condition) {
   const { history } = useReactRouter();
   useEffect(
     () => {
-      const unsubscribe = firebase.onAuthUserListener(authUser => {}, () => history.push(ROUTES.SIGN_IN));
+      const unsubscribe = firebase.onAuthUserListener(
+        authUser => {},
+        () => history.push(ROUTES.SIGN_IN)
+      );
 
       return () => unsubscribe();
     },

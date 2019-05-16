@@ -27,7 +27,10 @@ const getPageTitle = currentFullPath => {
   let propName = null;
   let propParent = null;
   routes.map((prop, key) => {
-    if (currentFullPath.includes(prop.parent) && currentFullPath.includes(prop.path)) {
+    if (
+      currentFullPath.includes(prop.parent) &&
+      currentFullPath.includes(prop.path)
+    ) {
       propName = prop.name;
       propParent = prop.parent;
     }
@@ -38,12 +41,13 @@ const getPageTitle = currentFullPath => {
 
 const switchRoutes = currentRolePath => {
   // Store the first path in the map loop below, we will use it to redirect to main path
-  let firstPath = null;
+  let firstPath = "";
+  console.log(currentRolePath + firstPath);
   return (
     <Switch>
       {routes.map((prop, key) => {
         if (prop.parent === currentRolePath) {
-          if (!firstPath) {
+          if (firstPath !== "") {
             firstPath = prop.path;
           }
           // We do this way to pass the path
@@ -58,7 +62,9 @@ const switchRoutes = currentRolePath => {
           );
         }
       })}
-      {currentRolePath === "/admin" && <Redirect from="/app" to="/admin/dashboard" />}
+      {currentRolePath === "/admin" && (
+        <Redirect from="/" to="/admin/dashboard" />
+      )}
       <Redirect from={currentRolePath} to={currentRolePath + firstPath} />
       <Redirect to="/404" />
     </Switch>
@@ -66,19 +72,23 @@ const switchRoutes = currentRolePath => {
 };
 
 const getCurrentRolePath = roles => {
-  return roles.hasOwnProperty("bulkinv") && roles.bulkinv.includes("admin") ? "/admin" : "/app";
+  return roles.hasOwnProperty("bulkinv") && roles.bulkinv.includes("admin")
+    ? "/admin"
+    : "/";
 };
 
 const Dashboard = props => {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [{ app }, dispatch] = useSessionValue();
-  const { classes } = props;
-
   // Make sure user is authorized
   const condition = authUser => !!authUser;
   useAuthorization(condition);
 
-  const currentRolePath = app.authUser ? getCurrentRolePath(app.authUser.roles) : "/app";
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [{ firebase, app }, dispatch] = useSessionValue();
+  const { classes } = props;
+
+  const currentRolePath = app.authUser
+    ? getCurrentRolePath(app.authUser.roles)
+    : "/";
 
   // Set Document title
   useDocumentTitle(getPageTitle(props.location.pathname));
@@ -87,10 +97,85 @@ const Dashboard = props => {
     setMobileOpen(!mobileOpen);
   };
 
+  // Load store settings
+  useEffect(
+    () => {
+      // Super admin does not have a current_store, we do not need this state
+      if (
+        app.authUser !== null &&
+        !app.authUser.roles.hasOwnProperty("bulkinv")
+      ) {
+        const unsubscribe = firebase.db
+          .collection("stores")
+          .doc(app.authUser.current_store.uid)
+          .collection("categories")
+          .doc(app.authUser.current_store.category[0])
+          .collection("settings")
+          .doc(app.authUser.current_store.category[1])
+          .onSnapshot(
+            snapshot => {
+              // console.log(snapshot.data());
+              localStorage.setItem(
+                "storeSettings",
+                JSON.stringify(snapshot.data())
+              );
+              dispatch({
+                type: "setStoreSettings",
+                storeSettings: snapshot.data()
+              });
+            },
+            err => {
+              console.log(`Encountered error fetching store settings: ${err}`);
+            }
+          );
+
+        return () => unsubscribe();
+      }
+    },
+    [app.authUser, dispatch, firebase.db]
+  );
+
+  // // Load category settings
+  useEffect(
+    () => {
+      // Super admin does not have a current_store, we do not need this state
+      if (
+        app.authUser !== null &&
+        !app.authUser.roles.hasOwnProperty("bulkinv")
+      ) {
+        const unsubscribe = firebase.db
+          .collection("categories")
+          .doc(app.authUser.current_store.category[0])
+          .onSnapshot(
+            snapshot => {
+              // console.log(snapshot.data());
+              localStorage.setItem(
+                "categorySettings",
+                JSON.stringify(snapshot.data())
+              );
+              dispatch({
+                type: "setCategorySettings",
+                categorySettings: snapshot.data()
+              });
+            },
+            err => {
+              console.log(`Encountered error fetching category: ${err}`);
+            }
+          );
+
+        return () => unsubscribe();
+      }
+    },
+    [app.authUser, dispatch, firebase.db]
+  );
+
   // Make sure authUser and, if app user  settings/category, are loaded
   const loading = () => {
     if (app.authUser) {
-      if (app.authUser.roles.hasOwnProperty("bulkinv") && app.authUser.roles.bulkinv.includes("ADMIN")) {
+      if (
+        app.authUser.roles.hasOwnProperty("bulkinv") &&
+        app.authUser.roles.bulkinv.includes("admin")
+      ) {
         return true;
       } else {
         if (app.storeSettings && app.categorySettings) {
@@ -109,7 +194,10 @@ const Dashboard = props => {
       {loading() ? (
         <div className={classes.root}>
           <CssBaseline />
-          <Header pageTitle={getPageTitle(props.location.pathname)} drawerToggle={handleDrawerToggle} />
+          <Header
+            pageTitle={getPageTitle(props.location.pathname)}
+            drawerToggle={handleDrawerToggle}
+          />
           <Navbar
             routes={routes}
             currentRolePath={currentRolePath}

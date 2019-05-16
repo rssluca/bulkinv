@@ -24,28 +24,28 @@ const appRoutes = [
     name: "Dashboard",
     icon: DashboardIcon,
     component: DashboardPage,
-    parent: "/app"
+    parent: "/"
   },
   {
     path: "/products/add",
     name: "Products",
     icon: AddIcon,
     component: ProductsPage,
-    parent: "/app"
+    parent: "/"
   },
   {
     path: "/settings",
     name: "Settings",
     icon: SettingsIcon,
     component: SettingsPage,
-    parent: "/app"
+    parent: "/"
   },
   {
     path: "/account",
     name: "Account",
     icon: PersonIcon,
     component: AccountPage,
-    parent: "/app"
+    parent: "/"
   },
   {
     path: "/dashboard",
