@@ -1,1 +1,1 @@
-Automatic inventory creation from uploaded product images (React.JS, Firebase)
+Automatic amazon inventory creation from uploaded product images (React.JS, Firebase)
